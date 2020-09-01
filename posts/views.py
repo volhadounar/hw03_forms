@@ -17,13 +17,13 @@ def group_posts(request, slug):
 
 
 def new_post(request):
-    if request.method == 'POST':
-        form = PostForm(request.POST)
-        if form.is_valid():
-            new = Post(text=form.cleaned_data['text'], author=request.user,
-                       group=form.cleaned_data['group'])
-            new.save()
-            return redirect('/')
+    if request.method != 'POST':
+        form = PostForm()
         return render(request, 'newpost.html', {'form': form})
-    form = PostForm()
-    return render(request, 'newpost.html', {'form': form})
+    form = PostForm(request.POST)
+    if form.is_valid() is False:
+        return render(request, 'newpost.html', {'form': form})
+    new_item = form.save(commit=False)
+    new_item.author = request.user
+    new_item.save()
+    return redirect('index')
