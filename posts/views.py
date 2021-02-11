@@ -20,6 +20,8 @@ def new_post(request):
     if request.method != 'POST':
         form = PostForm()
         return render(request, 'newpost.html', {'form': form})
+    if not request.user.is_authenticated:
+        return redirect('login')
     form = PostForm(request.POST)
     if form.is_valid() is False:
         return render(request, 'newpost.html', {'form': form})
